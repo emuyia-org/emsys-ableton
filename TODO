@@ -1,0 +1,19 @@
+
+# emsys-ableton todo
+
+## MCL Remote m4l tasks
+
+- test 'GETKIT' in md remote X.05 2.03 (run with Rosetta) functions when MD is routed through MegaCMD USB device
+- port 'GETKIT' from md remote X.05 2.03 into X.07_emmod
+- contemplate the extent to which ableton can substitute the functions that MCL offers
+
+## emsys pd porting (mset recreation)
+
+- investigate unlinked follow actions in place of mset segment bank data. there's even Pgm messages that can be linked to a clip, although I wonder if the Pgm will be sent in time for it to load properly; likely not. this can probably be circumvented with track delay
+- explore possibilities of the 'chance' feature of follow actions
+- we will also need to send TINs as part of the clip activation. this can probably be done with a max device on the same channel that has the clips
+- the Pgm setting for clips is too inflexible in terms of timing. we should make our own max for live device, and use some other arbitrary aspect of the clip; perhaps the name of it (or something more suitable if exists), to send the right Pgm.
+- we could also use SYSEX status request messages to get the currently loaded pattern in MD/MM to set the clip names (or wherever we end up storing this)
+- the LOM has `is_triggered` and `is_playing` for clips; this would be useful for PGM message timing, by listening to the `is_triggered`. after which, `live_set clip_trigger_quantization` gives us the quantisation point that the clip will actually start - or, we can use `is_playing`; whichever ends up working best.
+- timing TINs as well might be a case of doing some calculation to get the moment just before the start of the next phrase, since the TIN bang needs to come separately to the load bang (due to MD controlled by MCL getting confused by stop and PGM at the same time)
+- found a better way to store PGM info for clips: the `annotation` (`live_set tracks 0 clip_slots 0 clip annotation`) - this is editable by right clicking a clip and clicking "Edit Info Text". bank values can be stored here and obtained on `is_triggered` to pass on the PGM message.
